@@ -35,7 +35,8 @@ class DropboxManager: ObservableObject {
     }
     
     @objc private func handleTokenRefresh(_ notification: Notification) {
-        DispatchQueue.main.async {
+        let work = { [weak self] in
+            guard let self = self else { return }
             self.isRefreshing = true
             if let error = notification.userInfo?["error"] as? Error {
                 print("Token refresh error: \(error)")
@@ -46,14 +47,17 @@ class DropboxManager: ObservableObject {
                 self.checkAuthentication()
             }
         }
+        DispatchQueue.main.async(execute: work)
     }
     
     @objc private func handleAuthenticationSuccess() {
         print("Received authentication success notification")
-        DispatchQueue.main.async {
+        let work = { [weak self] in
+            guard let self = self else { return }
             self.isAuthenticated = true
             print("Authentication success - state set to true")
         }
+        DispatchQueue.main.async(execute: work)
     }
     
     func checkAuthentication() {

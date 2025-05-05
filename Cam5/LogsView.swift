@@ -1,40 +1,32 @@
 import SwiftUI
 
-struct LogEntry: Identifiable {
-    let id = UUID()
-    let timestamp: Date
-    let filename: String
-    let status: String
-}
-
 struct LogsView: View {
-    @State private var logs: [LogEntry] = []
+    let logs: [CaptureLog]
     
     var body: some View {
-        List(logs) { log in
-            VStack(alignment: .center) {
-                Text(log.filename)
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                HStack {
-                    Spacer()
-                    Text(log.timestamp, style: .date)
-                    Text(log.timestamp, style: .time)
-                    Spacer()
+        List(logs.reversed()) { log in
+            VStack(alignment: .leading, spacing: 8) {
+                Text(log.formattedDate)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                if let imageUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(log.filename),
+                   let imageData = try? Data(contentsOf: imageUrl),
+                   let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 200)
+                        .cornerRadius(8)
                 }
-                .font(.subheadline)
-                Text(log.status)
-                    .foregroundColor(log.status == "Success" ? .green : .red)
-                    .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity)
-            .listRowInsets(EdgeInsets())
+            .padding(.vertical, 8)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Upload Logs")
-                    .font(.largeTitle)
+                Text("Capture History")
+                    .font(.headline)
                     .foregroundColor(.primary)
             }
         }
@@ -43,6 +35,6 @@ struct LogsView: View {
 
 #Preview {
     NavigationView {
-        LogsView()
+        LogsView(logs: [])
     }
 } 

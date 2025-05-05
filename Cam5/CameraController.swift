@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import AVFoundation
 
 struct CameraController: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
@@ -9,17 +10,48 @@ struct CameraController: UIViewControllerRepresentable {
     func makeUIViewController(context: UIViewControllerRepresentableContext<CameraController>) -> UIImagePickerController {
         let picker = UIImagePickerController()
         
-        // Check if the source type is available
-        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-            picker.sourceType = sourceType
+        // Check camera authorization first
+        if sourceType == .camera {
+            switch AVCaptureDevice.authorizationStatus(for: .video) {
+            case .authorized:
+                setupCamera(picker)
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: .video) { granted in
+                    if granted {
+                        DispatchQueue.main.async {
+                            setupCamera(picker)
+                        }
+                    } else {
+                        fallbackToPhotoLibrary(picker)
+                    }
+                }
+            default:
+                fallbackToPhotoLibrary(picker)
+            }
         } else {
-            // Fallback to photo library if camera is not available (e.g., in simulator)
-            picker.sourceType = .photoLibrary
+            fallbackToPhotoLibrary(picker)
         }
         
         picker.delegate = context.coordinator
-        picker.allowsEditing = true // This will allow users to crop/edit the image
+        picker.allowsEditing = true
+        picker.modalPresentationStyle = .fullScreen
+        
         return picker
+    }
+    
+    private func setupCamera(_ picker: UIImagePickerController) {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+            picker.cameraCaptureMode = .photo
+            picker.cameraDevice = .rear
+            picker.cameraFlashMode = .auto
+        } else {
+            fallbackToPhotoLibrary(picker)
+        }
+    }
+    
+    private func fallbackToPhotoLibrary(_ picker: UIImagePickerController) {
+        picker.sourceType = .photoLibrary
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext<CameraController>) {

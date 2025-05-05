@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B6C708E52DC8C439000D00B5 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = B6C708E42DC8C439000D00B5 /* SwiftyDropbox */; };
+		B6C708E72DC8C439000D00B5 /* SwiftyDropboxObjC in Frameworks */ = {isa = PBXBuildFile; productRef = B6C708E62DC8C439000D00B5 /* SwiftyDropboxObjC */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B68BE1032DC800D000A64C8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6C708E52DC8C439000D00B5 /* SwiftyDropbox in Frameworks */,
+				B6C708E72DC8C439000D00B5 /* SwiftyDropboxObjC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +132,8 @@
 			);
 			name = Cam5;
 			packageProductDependencies = (
+				B6C708E42DC8C439000D00B5 /* SwiftyDropbox */,
+				B6C708E62DC8C439000D00B5 /* SwiftyDropboxObjC */,
 			);
 			productName = Cam5;
 			productReference = B68BE0F52DC800CF00A64C8E /* Cam5.app */;
@@ -208,6 +217,9 @@
 			);
 			mainGroup = B68BE0EC2DC800CF00A64C8E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B6C708E32DC8C439000D00B5 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B68BE0F62DC800CF00A64C8E /* Products */;
 			projectDirPath = "";
@@ -573,6 +585,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B6C708E32DC8C439000D00B5 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dropbox/SwiftyDropbox.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B6C708E42DC8C439000D00B5 /* SwiftyDropbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C708E32DC8C439000D00B5 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
+			productName = SwiftyDropbox;
+		};
+		B6C708E62DC8C439000D00B5 /* SwiftyDropboxObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6C708E32DC8C439000D00B5 /* XCRemoteSwiftPackageReference "SwiftyDropbox" */;
+			productName = SwiftyDropboxObjC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B68BE0ED2DC800CF00A64C8E /* Project object */;
 }

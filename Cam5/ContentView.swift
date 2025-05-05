@@ -12,6 +12,7 @@ struct ContentView: View {
     @StateObject private var imageCapture = ImageCapture()
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    @ObservedObject private var dropboxManager = DropboxManager.shared
     
     var body: some View {
         ZStack {
@@ -28,6 +29,45 @@ struct ContentView: View {
                                 .foregroundColor(.blue)
                         }
                         .padding(.top, 8)
+                        
+                        // Dropbox Status
+                        if !dropboxManager.isAuthenticated {
+                            Button(action: {
+                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                   let viewController = windowScene.windows.first?.rootViewController {
+                                    dropboxManager.authenticate(from: viewController)
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "link.badge.plus")
+                                    Text("Connect Dropbox")
+                                }
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                            }
+                            .padding()
+                        }
+                        
+                        if let status = imageCapture.uploadStatus {
+                            Text(status)
+                                .font(.caption)
+                                .foregroundColor(status.contains("failed") ? .red : .green)
+                                .padding()
+                        }
+                        
+                        if imageCapture.isUploading {
+                            ProgressView()
+                                .padding()
+                        }
+                        
+                        if dropboxManager.isRefreshing {
+                            Text("Refreshing Dropbox connection...")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .padding()
+                        }
                         
                         Spacer()
                         
@@ -87,6 +127,7 @@ struct ContentView: View {
                 .transition(.opacity)
                 .onAppear {
                     imageCapture.loadLogs()
+                    setupNotifications()
                 }
             }
             
@@ -96,6 +137,17 @@ struct ContentView: View {
             }
         }
         .animation(.easeOut(duration: 0.3), value: showingSplash)
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("DropboxAuthenticationRequired"),
+            object: nil,
+            queue: .main
+        ) { _ in
+            alertMessage = "Please connect your Dropbox account to upload receipts."
+            showingAlert = true
+        }
     }
 }
 

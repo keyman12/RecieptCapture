@@ -26,6 +26,7 @@ struct Cam5App: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         print("AppDelegate: Application did finish launching")
+        
         // Initialize Dropbox only once at app launch
         DropboxClientsManager.setupWithAppKey("nz20x9qbvapry4c")
         print("AppDelegate: Dropbox initialized with app key")
@@ -38,12 +39,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         // Check if we need to authenticate
         if DropboxClientsManager.authorizedClient == nil {
-            print("AppDelegate: Dropbox not authenticated, will need to authenticate")
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: NSNotification.Name("DropboxAuthenticationRequired"), object: nil)
-            }
+            print("AppDelegate: No authorized client available, checking for stored credentials")
+            // DropboxManager will attempt to restore from keychain
+            DropboxManager.shared.checkAuthentication()
         } else {
-            print("AppDelegate: Dropbox already authenticated")
+            print("AppDelegate: Dropbox client already available")
             DropboxManager.shared.checkAuthentication()
         }
         
